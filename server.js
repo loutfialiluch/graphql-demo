@@ -17,14 +17,19 @@ server.use(
 );
 
 // REST endpoints
-server.get("/", (req, res) =>
+server.get("/", (req, res) => {
+  const baseUrl = `${req.protocol}://${req.get("host")}`;
   res.json({
     event: "Webinaire Interne",
     subject: "Initiation à GraphQL",
-    graphqlEndpoint: "/graphql",
-    restEndpoints: ["/api/accounts", "/api/contacts", "/api/opportunities"],
-  })
-);
+    graphqlEndpoint: `${baseUrl}/graphql`,
+    restEndpoints: [
+      `${baseUrl}/api/accounts`,
+      `${baseUrl}/api/contacts`,
+      `${baseUrl}/api/opportunities`,
+    ],
+  });
+});
 server.get("/api/accounts", (req, res) => res.json(accounts));
 
 server.get("/api/contacts", (req, res) => res.json(contacts));

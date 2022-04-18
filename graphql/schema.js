@@ -1,15 +1,18 @@
 import {
   GraphQLList,
+  GraphQLNonNull,
   GraphQLObjectType,
   GraphQLSchema,
   GraphQLString,
 } from "graphql";
-import { AccountType, ContactType } from "./types.js";
+import { AccountType, ContactType, OpportunityType } from "./types.js";
 import {
   accountResolver,
   accountsResolver,
   contactResolver,
   contactsResolver,
+  opportunitiesResolver,
+  opportunityResolver,
 } from "./resolvers.js";
 
 const RootQueryType = new GraphQLObjectType({
@@ -22,7 +25,7 @@ const RootQueryType = new GraphQLObjectType({
     Account: {
       type: AccountType,
       args: {
-        id: { type: GraphQLString },
+        id: { type: new GraphQLNonNull(GraphQLString) },
       },
       resolve: accountResolver,
     },
@@ -33,9 +36,20 @@ const RootQueryType = new GraphQLObjectType({
     Contact: {
       type: ContactType,
       args: {
-        id: { type: GraphQLString },
+        id: { type: new GraphQLNonNull(GraphQLString) },
       },
       resolve: contactResolver,
+    },
+    Opportunities: {
+      type: new GraphQLList(OpportunityType),
+      resolve: opportunitiesResolver,
+    },
+    Opportunity: {
+      type: OpportunityType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLString) },
+      },
+      resolve: opportunityResolver,
     },
   },
 });

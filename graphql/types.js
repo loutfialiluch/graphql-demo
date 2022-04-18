@@ -4,7 +4,10 @@ import {
   GraphQLObjectType,
   GraphQLList,
   GraphQLNonNull,
+  GraphQLInt,
 } from "graphql";
+
+import { accounts, contacts } from "../data/index.js";
 
 const AddressType = new GraphQLObjectType({
   name: "Address",
@@ -30,6 +33,8 @@ export const AccountType = new GraphQLObjectType({
     BillingAddress: { type: AddressType },
     Contacts: {
       type: new GraphQLNonNull(new GraphQLList(ContactType)),
+      resolve: (parent, args) =>
+        contacts.filter(({ AccountId }) => AccountId === parent.Id),
     },
   }),
 });
@@ -43,6 +48,31 @@ export const ContactType = new GraphQLObjectType({
     Title: { type: GraphQLString },
     Email: { type: GraphQLString },
     MailingAddress: { type: AddressType },
-    Account: { type: AccountType },
+    AccountId: { type: GraphQLString },
+    Account: {
+      type: AccountType,
+      resolve: (parent, args) =>
+        accounts.find((account) => account.Id === parent.AccountId),
+    },
+  }),
+});
+
+export const OpportunityType = new GraphQLObjectType({
+  name: "Opportunity",
+  fields: () => ({
+    Id: { type: GraphQLString },
+    Name: { type: GraphQLString },
+    Type: { type: GraphQLString },
+    CloseDate: { type: GraphQLString },
+    StageName: { type: GraphQLString },
+    Probability: { type: GraphQLInt },
+    Amount: { type: GraphQLFloat },
+    ExpectedRevenue: { type: GraphQLFloat },
+    AccountId: { type: GraphQLString },
+    Account: {
+      type: AccountType,
+      resolve: (parent, args) =>
+        accounts.find((account) => account.Id === parent.AccountId),
+    },
   }),
 });
